@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import getToken from '../services/triviaAPI';
 
 export default class Login extends Component {
   state = {
@@ -10,6 +12,13 @@ export default class Login extends Component {
     this.setState({
       [target.name]: target.value,
     });
+  };
+
+  playBtn = async () => {
+    const { history } = this.props;
+    const token = await getToken();
+    localStorage.setItem('token', token);
+    history.push('/game');
   };
 
   render() {
@@ -44,6 +53,7 @@ export default class Login extends Component {
             type="button"
             data-testid="btn-play"
             disabled={ isDisabled }
+            onClick={ this.playBtn }
           >
             Play
           </button>
@@ -52,3 +62,6 @@ export default class Login extends Component {
     );
   }
 }
+Login.propTypes = {
+  history: PropTypes.func,
+}.isRequired;
