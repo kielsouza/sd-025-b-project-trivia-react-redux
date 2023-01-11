@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import Login from '../pages/Login';
@@ -85,11 +85,13 @@ describe('Testa a página de Login', () => {
         const inputEmail = screen.getByTestId(idEmail);
         const button = screen.getByTestId(idButtonPlay);
 
-        userEvent.type(inputName, 'Maria');
-        userEvent.type(inputEmail, 'maria@trybe.com');
-        userEvent.click(button);
+        waitFor(() => {
+            userEvent.type(inputName, 'Maria');
+            userEvent.type(inputEmail, 'maria@trybe.com');
+            userEvent.click(button);
 
-        expect(history.location.pathname).toBe('/game');
+            expect(history.location.pathname).toBe('/game');
+        }); 
     });
 
     it('Testa se a tela possui um botão com o nome "Settings", e ao ser clicado ele direciona para a tela de configurações.', () => {

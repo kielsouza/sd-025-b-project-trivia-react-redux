@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link, withRouter } from 'react-router-dom';
 import getToken from '../services/triviaAPI';
 
-export default class Login extends Component {
+class Login extends Component {
   state = {
     name: '',
     email: '',
@@ -57,6 +58,14 @@ export default class Login extends Component {
           >
             Play
           </button>
+          <Link to="/settings">
+            <button
+              type="button"
+              data-testid="btn-settings"
+            >
+              Settings
+            </button>
+          </Link>
         </div>
       </div>
     );
@@ -65,3 +74,5 @@ export default class Login extends Component {
 Login.propTypes = {
   history: PropTypes.func,
 }.isRequired;
+
+export default withRouter(Login);
