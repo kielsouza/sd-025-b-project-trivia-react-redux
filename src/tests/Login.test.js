@@ -37,7 +37,7 @@ describe('Testa a página de Login', () => {
     });
 
     it('Testa se a tela possui um Botão com o nome "Play" e se este fica habilitado ao ser preenchido todos os inputs.', () => {
-        renderWithRouterAndRedux(<Login />);
+        renderWithRouterAndRedux(<App />);
         const inputName = screen.getByTestId(idName);
         const inputEmail = screen.getByTestId(idEmail);
         const button = screen.getByTestId(idButtonPlay);
@@ -52,7 +52,7 @@ describe('Testa a página de Login', () => {
     });
     
     it('Testa se ao clicar no Botão "Play" é realizado uma requisição para buscar um token para o jogador.', () => {
-        renderWithRouterAndRedux(<Login />);
+        renderWithRouterAndRedux(<App />);
         const inputName = screen.getByTestId(idName);
         const inputEmail = screen.getByTestId(idEmail);
         const button = screen.getByTestId(idButtonPlay);
@@ -67,7 +67,7 @@ describe('Testa a página de Login', () => {
     });
 
     it('Verifica se o token recebido pela requisição foi armazenado no Local Storage com a chave "token".', () => {
-        renderWithRouterAndRedux(<Login />);
+        renderWithRouterAndRedux(<App />);
         const inputName = screen.getByTestId(idName);
         const inputEmail = screen.getByTestId(idEmail);
         const button = screen.getByTestId(idButtonPlay);
@@ -80,7 +80,7 @@ describe('Testa a página de Login', () => {
     });
 
     it('Testa se ao clicar no Botão "Play" é redirecionado para a tela do jogo.', () => {
-        const { history } = renderWithRouterAndRedux(<Login />);
+        const { history } = renderWithRouterAndRedux(<App />);
         const inputName = screen.getByTestId(idName);
         const inputEmail = screen.getByTestId(idEmail);
         const button = screen.getByTestId(idButtonPlay);

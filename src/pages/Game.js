@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import getQuestions from '../services/questionsAPI';
+import Header from '../components/Header';
+
 
 export default class Game extends Component {
   state = {
@@ -54,6 +56,7 @@ export default class Game extends Component {
 
     return (
       <div>
+       <Header />
         <h1>
           Trivia
         </h1>
@@ -79,7 +82,6 @@ export default class Game extends Component {
               </div>
             )}
         </div>
-
       </div>
     );
   }
