@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import getToken from '../services/triviaAPI';
+import { userLogin } from '../redux/actions';
 
 class Login extends Component {
   state = {
@@ -16,10 +18,12 @@ class Login extends Component {
   };
 
   playBtn = async () => {
-    const { history } = this.props;
+    const { history, dispatch } = this.props;
+    const { name, email } = this.state;
     const token = await getToken();
     localStorage.setItem('token', token);
     history.push('/game');
+    dispatch(userLogin({ name, email }));
   };
 
   render() {
@@ -75,4 +79,4 @@ Login.propTypes = {
   history: PropTypes.func,
 }.isRequired;
 
-export default withRouter(Login);
+export default connect()(Login);
