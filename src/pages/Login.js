@@ -18,7 +18,7 @@ class Login extends Component {
   playBtn = async () => {
     const { history } = this.props;
     const token = await getToken();
-    localStorage.setItem('token', token);
+    localStorage.setItem('token', token.token);
     history.push('/game');
   };
 
