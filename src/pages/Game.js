@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import getQuestions from '../services/questionsAPI';
 import Header from '../components/Header';
 
-
 export default class Game extends Component {
   state = {
     questions: [],
@@ -56,7 +55,7 @@ export default class Game extends Component {
 
     return (
       <div>
-       <Header />
+        <Header />
         <h1>
           Trivia
         </h1>
