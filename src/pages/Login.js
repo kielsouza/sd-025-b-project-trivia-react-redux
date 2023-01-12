@@ -21,7 +21,7 @@ class Login extends Component {
     const { history, dispatch } = this.props;
     const { name, email } = this.state;
     const token = await getToken();
-    localStorage.setItem('token', token);
+    localStorage.setItem('token', token.token);
     history.push('/game');
     dispatch(userLogin({ name, email }));
   };
