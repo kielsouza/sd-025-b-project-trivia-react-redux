@@ -2,18 +2,26 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import getToken from '../services/triviaAPI';
+import { getToken } from '../services/triviaAPI';
 import { userLogin } from '../redux/actions';
+import { isEmptyString, isValidEmail } from '../helpers';
 
 class Login extends Component {
   state = {
     name: '',
     email: '',
+    isValid: false,
   };
 
   onInputChange = ({ target }) => {
     this.setState({
       [target.name]: target.value,
+    }, () => {
+      const { email, name } = this.state;
+      const isValid = isValidEmail(email) && !isEmptyString(name);
+      this.setState({
+        isValid,
+      });
     });
   };
 
@@ -21,18 +29,13 @@ class Login extends Component {
     const { history, dispatch } = this.props;
     const { name, email } = this.state;
     const token = await getToken();
-    localStorage.setItem('token', token.token);
+    localStorage.setItem('token', token);
     history.push('/game');
     dispatch(userLogin({ name, email }));
   };
 
   render() {
-    const { name, email } = this.state;
-
-    let isDisabled = true;
-    if (name.length > 0 && email.length > 0) {
-      isDisabled = false;
-    }
+    const { name, email, isValid } = this.state;
 
     return (
       <div>
@@ -57,7 +60,7 @@ class Login extends Component {
           <button
             type="button"
             data-testid="btn-play"
-            disabled={ isDisabled }
+            disabled={ !isValid }
             onClick={ this.playBtn }
           >
             Play

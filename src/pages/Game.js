@@ -1,24 +1,33 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import getQuestions from '../services/questionsAPI';
+import { getQuestions } from '../services/triviaAPI';
 import Header from '../components/Header';
+import Question from '../components/Question';
 
+const responseCodes = {
+  Success: 0,
+  NoResults: 1,
+  InvalidParameter: 2,
+  TokenNotFound: 3,
+  TokenEmpty: 4,
+};
 export default class Game extends Component {
   state = {
     questions: [],
+    currentIndex: 0,
   };
 
   async componentDidMount() {
     const { history } = this.props;
-    const number3 = 3;
     try {
-      const questions = await getQuestions();
-      if (questions.response_code === number3) {
+      const { code, questions } = await getQuestions();
+      if (code === responseCodes.TokenNotFound) {
         localStorage.clear();
         return history.replace('/');
       }
+
       this.setState({
-        questions: questions.results,
+        questions,
       });
     } catch (error) {
       console.log(error);
@@ -26,32 +35,8 @@ export default class Game extends Component {
   }
 
   render() {
-    const { questions } = this.state;
-
-    let fourQuestions = [];
-    if (questions.length > 0) {
-      fourQuestions = [
-        <button
-          key="correct-answer"
-          type="button"
-          data-testid="correct-answer"
-        >
-          {questions[0].correct_answer}
-        </button>,
-        ...questions[0].incorrect_answers.map((elem, index) => (
-          <button
-            type="button"
-            key={ index }
-            data-testid={ `wrong-answer-${index}` }
-          >
-            {elem}
-          </button>
-        )),
-      ];
-      const number05 = 0.5;
-      const shuffle = (array) => array.sort(() => Math.random() - number05);
-      shuffle(fourQuestions);
-    }
+    const { questions, currentIndex } = this.state;
+    const question = questions[currentIndex];
 
     return (
       <div>
@@ -60,26 +45,7 @@ export default class Game extends Component {
           Trivia
         </h1>
         <div>
-          {questions.length > 0
-            && (
-              <div>
-                <h2 data-testid="question-category">
-                  {questions[0].category}
-                </h2>
-
-                <h2 data-testid="question-text">
-                  {questions[0].question}
-                </h2>
-
-                <div data-testid="answer-options">
-                  {
-                    fourQuestions.map((elem) => (
-                      elem
-                    ))
-                  }
-                </div>
-              </div>
-            )}
+          {question && <Question { ...question } />}
         </div>
       </div>
     );

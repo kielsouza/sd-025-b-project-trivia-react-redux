@@ -1,111 +1,114 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
 import App from '../App';
-import Login from '../pages/Login';
 import { renderWithRouterAndRedux } from './helpers/renderWithRouterAndRedux';
-
-const token = {
-    "response_code":0,
-    "response_message":"Token Generated Successfully!",
-    "token":"f00cb469ce38726ee00a7c6836761b0a4fb808181a125dcde6d50a9f3c9127b6"
-  };
+import { tokenResponseMock, questionResponseMock } from './mocks';
 
 describe('Testa a página de Login', () => {
-    beforeEach(() => {
-        jest.spyOn(global, 'fetch');
-        global.fetch.mockResolvedValue({
-            json: jest.fn().mockResolvedValue(token),
-        });
-    });
+  beforeEach(() => {
+    jest
+      .spyOn(global, 'fetch')
+      .mockResolvedValue({
+        json: jest
+          .fn(() => tokenResponseMock)
+          .mockImplementationOnce(() => tokenResponseMock)
+          .mockImplementationOnce(() => questionResponseMock),
+      });
+  });
 
-    afterEach(() => {
-        jest.resetAllMocks();
-    });
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
 
-    const idName = 'input-player-name';
-    const idEmail = 'input-gravatar-email';
-    const idButtonPlay = 'btn-play';
-    const idButtonSettings = 'btn-settings';
+  const idName = 'input-player-name';
+  const idEmail = 'input-gravatar-email';
+  const idButtonPlay = 'btn-play';
+  const idButtonSettings = 'btn-settings';
 
-    it('Testa se a tela possui input de Nome e Email', () => {
-        renderWithRouterAndRedux(<Login />);
-        const inputName = screen.getByTestId(idName);
-        const inputEmail = screen.getByTestId(idEmail);
-        expect(inputName).toBeInTheDocument();
-        expect(inputEmail).toBeInTheDocument();
-    });
+  it('Testa se a tela possui input de Nome e Email', () => {
+    renderWithRouterAndRedux(<App />);
 
-    it('Testa se a tela possui um Botão com o nome "Play" e se este fica habilitado ao ser preenchido todos os inputs.', () => {
-        renderWithRouterAndRedux(<App />);
-        const inputName = screen.getByTestId(idName);
-        const inputEmail = screen.getByTestId(idEmail);
-        const button = screen.getByTestId(idButtonPlay);
+    const inputName = screen.getByTestId(idName);
+    const inputEmail = screen.getByTestId(idEmail);
 
-        expect(button).toBeInTheDocument();
-        expect(button).toBeDisabled();
+    expect(inputName).toBeInTheDocument();
+    expect(inputEmail).toBeInTheDocument();
+  });
 
-        userEvent.type(inputName, 'Maria');
-        userEvent.type(inputEmail, 'maria@trybe.com');
+  it('Testa se a tela possui um Botão com o nome "Play" e se este fica habilitado ao ser preenchido todos os inputs.', async () => {
+    renderWithRouterAndRedux(<App />);
 
-        expect(button).toBeEnabled();
-    });
-    
-    it('Testa se ao clicar no Botão "Play" é realizado uma requisição para buscar um token para o jogador.', () => {
-        renderWithRouterAndRedux(<App />);
-        const inputName = screen.getByTestId(idName);
-        const inputEmail = screen.getByTestId(idEmail);
-        const button = screen.getByTestId(idButtonPlay);
+    const inputName = screen.getByTestId(idName);
+    const inputEmail = screen.getByTestId(idEmail);
+    const button = screen.getByTestId(idButtonPlay);
 
-        userEvent.type(inputName, 'Maria');
-        userEvent.type(inputEmail, 'maria@trybe.com');
-        userEvent.click(button);
+    expect(button).toBeInTheDocument();
+    expect(button).toBeDisabled();
 
-        expect(global.fetch).toHaveBeenCalled();
-        expect(global.fetch).toHaveBeenCalledWith('https://opentdb.com/api_token.php?command=request');
-        expect(global.fetch).toHaveBeenCalledTimes(1);
-    });
+    await act(() => userEvent.type(inputName, 'Maria'));
+    await act(() => userEvent.type(inputEmail, 'maria@trybe.com'));
 
-    it('Verifica se o token recebido pela requisição foi armazenado no Local Storage com a chave "token".', () => {
-        renderWithRouterAndRedux(<App />);
-        const inputName = screen.getByTestId(idName);
-        const inputEmail = screen.getByTestId(idEmail);
-        const button = screen.getByTestId(idButtonPlay);
+    expect(button).toBeEnabled();
+  });
 
-        userEvent.type(inputName, 'Maria');
-        userEvent.type(inputEmail, 'maria@trybe.com');
-        userEvent.click(button);
+  it('Testa se ao clicar no Botão "Play" é realizado uma requisição para buscar um token para o jogador.', async () => {
+    renderWithRouterAndRedux(<App />);
 
-        expect(localStorage.getItem('token')).toBe(token.token);
-    });
+    const inputName = screen.getByTestId(idName);
+    const inputEmail = screen.getByTestId(idEmail);
+    const button = screen.getByTestId(idButtonPlay);
 
-    it('Testa se ao clicar no Botão "Play" é redirecionado para a tela do jogo.', () => {
-        const { history } = renderWithRouterAndRedux(<App />);
-        const inputName = screen.getByTestId(idName);
-        const inputEmail = screen.getByTestId(idEmail);
-        const button = screen.getByTestId(idButtonPlay);
+    await act(() => userEvent.type(inputName, 'Maria'));
+    await act(() => userEvent.type(inputEmail, 'maria@trybe.com'));
+    await act(() => userEvent.click(button));
 
-        waitFor(() => {
-            userEvent.type(inputName, 'Maria');
-            userEvent.type(inputEmail, 'maria@trybe.com');
-            userEvent.click(button);
+    expect(global.fetch).toHaveBeenCalled();
+    expect(global.fetch).toHaveBeenCalledWith('https://opentdb.com/api_token.php?command=request');
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+  });
 
-            expect(history.location.pathname).toBe('/game');
-        }); 
-    });
+  it('Verifica se o token recebido pela requisição foi armazenado no Local Storage com a chave "token".', async () => {
+    renderWithRouterAndRedux(<App />);
 
-    it('Testa se a tela possui um botão com o nome "Settings", e ao ser clicado ele direciona para a tela de configurações.', () => {
-        const { history } = renderWithRouterAndRedux(<App />);
+    const inputName = screen.getByTestId(idName);
+    const inputEmail = screen.getByTestId(idEmail);
+    const button = screen.getByTestId(idButtonPlay);
 
-        const buttonSettings = screen.getByTestId(idButtonSettings);
+    await act(() => userEvent.type(inputName, 'Maria'));
+    await act(() => userEvent.type(inputEmail, 'maria@trybe.com'));
+    await act(() => userEvent.click(button));
 
-        expect(buttonSettings).toBeInTheDocument();
+    expect(localStorage.getItem('token')).toBe(tokenResponseMock.token);
+  });
 
-        userEvent.click(buttonSettings);
-        expect(history.location.pathname).toBe('/settings'); 
+  it('Testa se ao clicar no Botão "Play" é redirecionado para a tela do jogo.', async () => {
+    const { history } = renderWithRouterAndRedux(<App />);
 
-        const title = screen.getByTestId('settings-title');
-        expect(title).toBeInTheDocument();
-    });
+    const inputName = screen.getByTestId(idName);
+    const inputEmail = screen.getByTestId(idEmail);
+    const button = screen.getByTestId(idButtonPlay);
+
+    await act(() => userEvent.type(inputName, 'Maria'));
+    await act(() => userEvent.type(inputEmail, 'maria@trybe.com'));
+    await act(() => userEvent.click(button));
+
+    expect(history.location.pathname).toBe('/game');
+  });
+
+  it('Testa se a tela possui um botão com o nome "Settings", e ao ser clicado ele direciona para a tela de configurações.', async () => {
+    const { history } = renderWithRouterAndRedux(<App />);
+
+    const buttonSettings = screen.getByTestId(idButtonSettings);
+
+    expect(buttonSettings).toBeInTheDocument();
+
+    await act(() => userEvent.click(buttonSettings));
+    expect(history.location.pathname).toBe('/settings');
+
+    const title = screen.getByTestId('settings-title');
+    expect(title).toBeInTheDocument();
+  });
 
 });
