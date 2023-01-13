@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 
 class Answer extends Component {
   render() {
-    const { text, correct, index } = this.props;
+    const { text, correct, index, timeOver } = this.props;
     return (
       <button
+        disabled={ timeOver }
         key={ text }
         type="button"
         data-testid={ correct ? 'correct-answer' : `wrong-answer-${index}` }
@@ -24,6 +25,7 @@ Answer.propTypes = {
   text: PropTypes.string.isRequired,
   index: PropTypes.number,
   correct: PropTypes.bool.isRequired,
+  timeOver: PropTypes.bool.isRequired,
 };
 
 export default Answer;
