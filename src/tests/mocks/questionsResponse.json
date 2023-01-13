@@ -1,0 +1,63 @@
+{
+  "response_code": 0,
+  "results": [
+    {
+      "category": "General Knowledge",
+      "type": "multiple",
+      "difficulty": "easy",
+      "question": "Which best selling toy of 1983 caused hysteria, resulting in riots breaking out in stores?",
+      "correct_answer": "Cabbage Patch Kids",
+      "incorrect_answers": [
+        "Transformers",
+        "Care Bears",
+        "Rubik&rsquo;s Cube"
+      ]
+    },
+    {
+      "category": "Entertainment: Film",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "What is the name of the dog that played Toto in the 1939 film &quot;The Wizard of Oz&quot;?",
+      "correct_answer": "Terry",
+      "incorrect_answers": [
+        "Tommy",
+        "Teddy",
+        "Toto"
+      ]
+    },
+    {
+      "category": "Entertainment: Japanese Anime & Manga",
+      "type": "boolean",
+      "difficulty": "easy",
+      "question": "In the &quot;Toaru Kagaku no Railgun&quot; anime,  espers can only reach a maximum of level 6 in their abilities.",
+      "correct_answer": "False",
+      "incorrect_answers": [
+        "True"
+      ]
+    },
+    {
+      "category": "Entertainment: Japanese Anime & Manga",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "In &quot;To Love-Ru&quot;, who is the first to hear of Yami&#039;s past from her?",
+      "correct_answer": "Rito",
+      "incorrect_answers": [
+        "Mikan",
+        "Lala",
+        "Haruna"
+      ]
+    },
+    {
+      "category": "Animals",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "What is the common term for bovine spongiform encephalopathy (BSE)?",
+      "correct_answer": "Mad Cow disease",
+      "incorrect_answers": [
+        "Weil&#039;s disease",
+        "Milk fever",
+        "Foot-and-mouth disease"
+      ]
+    }
+  ]
+}
