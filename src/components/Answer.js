@@ -1,7 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import '../App.css';
 
 class Answer extends Component {
+  handleClick = () => {
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach((element) => {
+      const dataTestId = element.attributes['data-testid'].value;
+      return dataTestId === 'correct-answer'
+        ? element.classList.add('green-button') : element.classList.add('red-button');
+    });
+  };
+
   render() {
     const { text, correct, index } = this.props;
     return (
@@ -9,6 +19,7 @@ class Answer extends Component {
         key={ text }
         type="button"
         data-testid={ correct ? 'correct-answer' : `wrong-answer-${index}` }
+        onClick={ this.handleClick }
       >
         {text}
       </button>
