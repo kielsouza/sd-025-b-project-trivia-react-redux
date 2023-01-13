@@ -1,8 +1,9 @@
-import { USER_LOGIN } from '../actions';
+import { USER_LOGIN, USER_SCORE } from '../actions';
 
 const INITIAL_STATE = {
   email: '',
   name: '',
+  score: 0,
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -12,6 +13,12 @@ const userReducer = (state = INITIAL_STATE, action) => {
       ...state,
       email: action.payload.email,
       name: action.payload.name,
+    };
+  }
+  case USER_SCORE: {
+    return {
+      ...state,
+      score: state.score + action.payload,
     };
   }
   default: return state;

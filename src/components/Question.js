@@ -43,6 +43,31 @@ class Question extends Component {
     shuffle(answers);
   }
 
+  scorePlayer = () => {
+    const { timePlayer } = this.state;
+    const { difficulty } = this.props;
+    const format = timePlayer.replace(':', '');
+    let score = 0;
+    const NUMBER_10 = 10;
+    const NUMBER_1 = 1;
+    const NUMBER_2 = 2;
+    const NUMBER_3 = 3;
+    switch (difficulty) {
+    case 'easy':
+      score = NUMBER_10 + (Number(format) * NUMBER_1);
+      break;
+    case 'medium':
+      score = NUMBER_10 + (Number(format) * NUMBER_2);
+      break;
+    case 'hard':
+      score = NUMBER_10 + (Number(format) * NUMBER_3);
+      break;
+    default:
+      return 0;
+    }
+    return score;
+  };
+
   render() {
     const { timePlayer, timeOver } = this.state;
     const { category, question, answers } = this.props;
@@ -50,11 +75,11 @@ class Question extends Component {
     return (
       <div>
         <h2 data-testid="question-category">
-          {category}
+          { category }
         </h2>
 
         <h2 data-testid="question-text">
-          {question}
+          { question }
         </h2>
         <h3>
           { timePlayer }
@@ -69,6 +94,7 @@ class Question extends Component {
                 text={ text }
                 correct={ correct }
                 index={ index }
+                scorePlayer={ this.scorePlayer }
               />
             ))
           }

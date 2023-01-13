@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import '../App.css';
+import { connect } from 'react-redux';
+import { userScore } from '../redux/actions';
 
 class Answer extends Component {
   handleClick = () => {
@@ -10,6 +12,11 @@ class Answer extends Component {
       return dataTestId === 'correct-answer'
         ? element.classList.add('green-button') : element.classList.add('red-button');
     });
+    const { scorePlayer, correct, dispatch } = this.props;
+    if (correct) {
+      const score = scorePlayer();
+      dispatch(userScore(score));
+    }
   };
 
   render() {
@@ -37,6 +44,8 @@ Answer.propTypes = {
   index: PropTypes.number,
   correct: PropTypes.bool.isRequired,
   timeOver: PropTypes.bool.isRequired,
+  scorePlayer: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
-export default Answer;
+export default connect()(Answer);
