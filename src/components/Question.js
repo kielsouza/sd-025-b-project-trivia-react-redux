@@ -1,21 +1,29 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { connect } from 'react-redux';
 import Answer from './Answer';
 import { shuffle } from '../helpers';
+import { nextQuestion, userScore } from '../redux/actions';
 
 class Question extends Component {
   state = {
     timePlayer: '',
     intervalID: undefined,
     timeOver: false,
+    showNextBtn: false,
+    timerFunc: undefined,
+    shuffleAnsewers: [],
   };
 
   componentDidMount() {
+    const { answers } = this.props;
+    this.setState({
+      shuffleAnsewers: answers,
+    });
     const ONE_SECOND = 1000;
     const QUESTION_DURATION = 30;
-    const { answers } = this.props;
-
+    const { shuffleAnsewers } = this.state;
     const timer = (seconds) => {
       let remainingTime = seconds;
       const setIntervalID = setInterval(() => {
@@ -40,7 +48,10 @@ class Question extends Component {
       });
     };
     timer(QUESTION_DURATION);
-    shuffle(answers);
+    shuffle(shuffleAnsewers);
+    this.setState({
+      timerFunc: timer,
+    });
   }
 
   scorePlayer = () => {
@@ -68,10 +79,43 @@ class Question extends Component {
     return score;
   };
 
-  render() {
-    const { timePlayer, timeOver } = this.state;
-    const { category, question, answers } = this.props;
+  handleClick = ({ target }) => {
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach((element) => {
+      const dataTestId = element.attributes['data-testid'].value;
+      return dataTestId === 'correct-answer'
+        ? element.classList.add('green-button') : element.classList.add('red-button');
+    });
+    const { dispatch } = this.props;
+    const verifyAnswer = target.attributes['data-testid'].value;
+    if (verifyAnswer === 'correct-answer') {
+      const score = this.scorePlayer();
+      dispatch(userScore(score));
+    }
+    this.setState({
+      showNextBtn: true,
+    }, () => {
+      const { intervalID } = this.state;
+      clearInterval(intervalID);
+    });
+  };
 
+  handleClickNext = () => {
+    const { dispatch } = this.props;
+    const { timerFunc, shuffleAnsewers } = this.state;
+    const QUESTION_DURATION = 30;
+    dispatch(nextQuestion(1));
+    this.setState({
+      showNextBtn: false,
+    }, () => {
+      timerFunc(QUESTION_DURATION);
+      shuffle(shuffleAnsewers);
+    });
+  };
+
+  render() {
+    const { timePlayer, timeOver, showNextBtn, shuffleAnsewers } = this.state;
+    const { category, question } = this.props;
     return (
       <div>
         <h2 data-testid="question-category">
@@ -87,7 +131,7 @@ class Question extends Component {
 
         <div data-testid="answer-options">
           {
-            answers.map(({ text, correct, index = null }, key) => (
+            shuffleAnsewers.map(({ text, correct, index = null }, key) => (
               <Answer
                 timeOver={ timeOver }
                 key={ key }
@@ -95,10 +139,21 @@ class Question extends Component {
                 correct={ correct }
                 index={ index }
                 scorePlayer={ this.scorePlayer }
+                handleClickNext={ this.handleClickNext }
+                handleClick={ this.handleClick }
               />
             ))
           }
         </div>
+        {showNextBtn && (
+          <button
+            type="button"
+            data-testid="btn-next"
+            onClick={ this.handleClickNext }
+          >
+            Next
+          </button>
+        )}
       </div>
     );
   }
@@ -114,6 +169,7 @@ Question.propTypes = {
     correct: PropTypes.bool,
     index: PropTypes.number,
   })),
+  dispatch: PropTypes.func,
 }.isRequired;
 
-export default Question;
+export default connect()(Question);
