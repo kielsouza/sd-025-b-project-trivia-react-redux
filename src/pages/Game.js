@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { getQuestions } from '../services/triviaAPI';
 import Header from '../components/Header';
 import Question from '../components/Question';
@@ -11,10 +12,9 @@ const responseCodes = {
   TokenNotFound: 3,
   TokenEmpty: 4,
 };
-export default class Game extends Component {
+class Game extends Component {
   state = {
     questions: [],
-    currentIndex: 0,
   };
 
   async componentDidMount() {
@@ -35,8 +35,15 @@ export default class Game extends Component {
   }
 
   render() {
-    const { questions, currentIndex } = this.state;
+    const { questions } = this.state;
+    const { currentIndex } = this.props;
     const question = questions[currentIndex];
+    const MaxQuestions = 4;
+
+    if (currentIndex > MaxQuestions) {
+      const { history } = this.props;
+      history.push('/feedback');
+    }
 
     return (
       <div>
@@ -54,4 +61,12 @@ export default class Game extends Component {
 
 Game.propTypes = {
   history: PropTypes.func,
+  dispatch: PropTypes.func,
+  currentIndex: PropTypes.number,
 }.isRequired;
+
+const mapStateToProps = (state) => ({
+  currentIndex: state.game.currentIndex,
+});
+
+export default connect(mapStateToProps)(Game);

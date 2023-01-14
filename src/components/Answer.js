@@ -1,29 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import '../App.css';
+import { connect } from 'react-redux';
 
 class Answer extends Component {
-  handleClick = () => {
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach((element) => {
-      const dataTestId = element.attributes['data-testid'].value;
-      return dataTestId === 'correct-answer'
-        ? element.classList.add('green-button') : element.classList.add('red-button');
-    });
-  };
-
   render() {
-    const { text, correct, index, timeOver } = this.props;
+    const { text, correct, index, timeOver, handleClick } = this.props;
     return (
-      <button
-        disabled={ timeOver }
-        key={ text }
-        type="button"
-        data-testid={ correct ? 'correct-answer' : `wrong-answer-${index}` }
-        onClick={ this.handleClick }
-      >
-        {text}
-      </button>
+      <div>
+        <button
+          disabled={ timeOver }
+          key={ text }
+          type="button"
+          data-testid={ correct ? 'correct-answer' : `wrong-answer-${index}` }
+          onClick={ handleClick }
+        >
+          {text}
+        </button>
+      </div>
     );
   }
 }
@@ -37,6 +31,7 @@ Answer.propTypes = {
   index: PropTypes.number,
   correct: PropTypes.bool.isRequired,
   timeOver: PropTypes.bool.isRequired,
+  handleClick: PropTypes.func.isRequired,
 };
 
-export default Answer;
+export default connect()(Answer);
