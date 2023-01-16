@@ -1,9 +1,10 @@
-import { USER_LOGIN, USER_SCORE } from '../actions';
+import { USER_LOGIN, USER_SCORE, USER_ASSERTIONS } from '../actions';
 
 const INITIAL_STATE = {
   email: '',
   name: '',
   score: 0,
+  assertions: 0,
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -21,6 +22,13 @@ const userReducer = (state = INITIAL_STATE, action) => {
       score: state.score + action.payload,
     };
   }
+  case USER_ASSERTIONS: {
+    return {
+      ...state,
+      assertions: state.assertions + action.payload,
+    };
+  }
+
   default: return state;
   }
 };

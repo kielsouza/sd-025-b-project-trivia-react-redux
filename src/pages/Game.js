@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { getQuestions } from '../services/triviaAPI';
 import Header from '../components/Header';
 import Question from '../components/Question';
+import { shuffle } from '../helpers';
 
 const responseCodes = {
   Success: 0,
@@ -22,7 +23,6 @@ class Game extends Component {
     try {
       const { code, questions } = await getQuestions();
       if (code === responseCodes.TokenNotFound) {
-        localStorage.clear();
         return history.replace('/');
       }
 
@@ -39,6 +39,10 @@ class Game extends Component {
     const { currentIndex } = this.props;
     const question = questions[currentIndex];
     const MaxQuestions = 4;
+
+    if (question !== undefined) {
+      shuffle(question.answers);
+    }
 
     if (currentIndex > MaxQuestions) {
       const { history } = this.props;
