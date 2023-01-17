@@ -7,9 +7,11 @@ class Header extends Component {
   render() {
     const { email, name, score } = this.props;
     const hash = md5(email).toString().toLowerCase();
+    const picture = `https://www.gravatar.com/avatar/${hash}`;
+
     return (
       <div>
-        <img src={ `https://www.gravatar.com/avatar/${hash}` } alt="Foto de perfil" data-testid="header-profile-picture" />
+        <img src={ picture } alt="Foto de perfil" data-testid="header-profile-picture" />
         <h2 data-testid="header-player-name">{ name }</h2>
         <h2 data-testid="header-score">{ score }</h2>
       </div>

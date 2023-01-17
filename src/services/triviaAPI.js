@@ -14,7 +14,7 @@ const parseQuestions = (results) => results.map(({
   question,
   answers: [
     { text: correctAnswer, correct: true },
-    ...incorrectAnswers.map((text, index) => ({ text, index, correct: false })),
+    ...incorrectAnswers.map((text) => ({ text, correct: false })),
   ],
 }));
 

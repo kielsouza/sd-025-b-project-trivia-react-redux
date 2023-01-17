@@ -1,29 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
 import Answer from './Answer';
-import { shuffle } from '../helpers';
-import { nextQuestion, userScore } from '../redux/actions';
+import { nextQuestion, userAssertions, userScore } from '../redux/actions';
 
 class Question extends Component {
   state = {
     timePlayer: '',
     intervalID: undefined,
-    timeOver: false,
+    timeOver: true,
     showNextBtn: false,
     timerFunc: undefined,
-    shuffleAnsewers: [],
   };
 
   componentDidMount() {
-    const { answers } = this.props;
-    this.setState({
-      shuffleAnsewers: answers,
-    });
     const ONE_SECOND = 1000;
     const QUESTION_DURATION = 30;
-    const { shuffleAnsewers } = this.state;
     const timer = (seconds) => {
       let remainingTime = seconds;
       const setIntervalID = setInterval(() => {
@@ -40,6 +32,12 @@ class Question extends Component {
         if (timePlayer === '00:00') {
           this.setState({
             timeOver: true,
+            showNextBtn: true,
+          });
+        }
+        if (timePlayer === '') {
+          this.setState({
+            timeOver: false,
           });
         }
       }, ONE_SECOND);
@@ -47,8 +45,9 @@ class Question extends Component {
         intervalID: setIntervalID,
       });
     };
+
     timer(QUESTION_DURATION);
-    shuffle(shuffleAnsewers);
+
     this.setState({
       timerFunc: timer,
     });
@@ -58,11 +57,9 @@ class Question extends Component {
     const { timePlayer } = this.state;
     const { difficulty } = this.props;
     const format = timePlayer.replace(':', '');
+    const NUMBER_1 = 1; const NUMBER_2 = 2; const NUMBER_3 = 3; const NUMBER_10 = 10;
+
     let score = 0;
-    const NUMBER_10 = 10;
-    const NUMBER_1 = 1;
-    const NUMBER_2 = 2;
-    const NUMBER_3 = 3;
     switch (difficulty) {
     case 'easy':
       score = NUMBER_10 + (Number(format) * NUMBER_1);
@@ -91,9 +88,12 @@ class Question extends Component {
     if (verifyAnswer === 'correct-answer') {
       const score = this.scorePlayer();
       dispatch(userScore(score));
+      dispatch(userAssertions(1));
     }
     this.setState({
       showNextBtn: true,
+      timePlayer: '',
+      timeOver: true,
     }, () => {
       const { intervalID } = this.state;
       clearInterval(intervalID);
@@ -102,20 +102,21 @@ class Question extends Component {
 
   handleClickNext = () => {
     const { dispatch } = this.props;
-    const { timerFunc, shuffleAnsewers } = this.state;
+    const { timerFunc } = this.state;
     const QUESTION_DURATION = 30;
     dispatch(nextQuestion(1));
     this.setState({
       showNextBtn: false,
+      timeOver: true,
     }, () => {
       timerFunc(QUESTION_DURATION);
-      shuffle(shuffleAnsewers);
     });
   };
 
   render() {
-    const { timePlayer, timeOver, showNextBtn, shuffleAnsewers } = this.state;
-    const { category, question } = this.props;
+    const { timePlayer, timeOver, showNextBtn } = this.state;
+    const { category, question, answers } = this.props;
+
     return (
       <div>
         <h2 data-testid="question-category">
@@ -131,7 +132,7 @@ class Question extends Component {
 
         <div data-testid="answer-options">
           {
-            shuffleAnsewers.map(({ text, correct, index = null }, key) => (
+            answers.map(({ text, correct, index = null }, key) => (
               <Answer
                 timeOver={ timeOver }
                 key={ key }
@@ -139,7 +140,6 @@ class Question extends Component {
                 correct={ correct }
                 index={ index }
                 scorePlayer={ this.scorePlayer }
-                handleClickNext={ this.handleClickNext }
                 handleClick={ this.handleClick }
               />
             ))

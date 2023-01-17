@@ -7,17 +7,15 @@ class Answer extends Component {
   render() {
     const { text, correct, index, timeOver, handleClick } = this.props;
     return (
-      <div>
-        <button
-          disabled={ timeOver }
-          key={ text }
-          type="button"
-          data-testid={ correct ? 'correct-answer' : `wrong-answer-${index}` }
-          onClick={ handleClick }
-        >
-          {text}
-        </button>
-      </div>
+      <button
+        disabled={ timeOver }
+        key={ text }
+        type="button"
+        data-testid={ correct ? 'correct-answer' : `wrong-answer-${index}` }
+        onClick={ handleClick }
+      >
+        {text}
+      </button>
     );
   }
 }
