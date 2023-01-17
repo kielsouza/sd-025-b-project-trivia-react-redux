@@ -1,10 +1,11 @@
-import { USER_LOGIN, USER_SCORE, USER_ASSERTIONS } from '../actions';
+import { USER_LOGIN, USER_SCORE, USER_ASSERTIONS, RESET_SCORE } from '../actions';
 
 const INITIAL_STATE = {
   email: '',
   name: '',
   score: 0,
   assertions: 0,
+  picture: '',
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -14,6 +15,7 @@ const userReducer = (state = INITIAL_STATE, action) => {
       ...state,
       email: action.payload.email,
       name: action.payload.name,
+      picture: action.payload.picture,
     };
   }
   case USER_SCORE: {
@@ -26,6 +28,12 @@ const userReducer = (state = INITIAL_STATE, action) => {
     return {
       ...state,
       assertions: state.assertions + action.payload,
+    };
+  }
+  case RESET_SCORE: {
+    return {
+      ...state,
+      score: action.payload,
     };
   }
 

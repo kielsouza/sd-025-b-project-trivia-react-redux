@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import md5 from 'crypto-js/md5';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getToken } from '../services/triviaAPI';
@@ -30,8 +31,10 @@ class Login extends Component {
     const { name, email } = this.state;
     const token = await getToken();
     localStorage.setItem('token', token);
+    const hash = md5(email).toString().toLowerCase();
+    const picture = `https://www.gravatar.com/avatar/${hash}`;
+    dispatch(userLogin({ name, email, picture }));
     history.push('/game');
-    dispatch(userLogin({ name, email }));
   };
 
   render() {

@@ -5,6 +5,7 @@ import { getQuestions } from '../services/triviaAPI';
 import Header from '../components/Header';
 import Question from '../components/Question';
 import { shuffle } from '../helpers';
+import { resetIndex } from '../redux/actions';
 
 const responseCodes = {
   Success: 0,
@@ -25,9 +26,13 @@ class Game extends Component {
       if (code === responseCodes.TokenNotFound) {
         return history.replace('/');
       }
+      const shuffleQuestions = questions.map(({ answers, ...rest }) => ({
+        ...rest,
+        answers: shuffle(answers),
+      }));
 
       this.setState({
-        questions,
+        questions: shuffleQuestions,
       });
     } catch (error) {
       console.log(error);
@@ -40,13 +45,14 @@ class Game extends Component {
     const question = questions[currentIndex];
     const MaxQuestions = 4;
 
-    if (question !== undefined) {
-      shuffle(question.answers);
-    }
-
     if (currentIndex > MaxQuestions) {
-      const { history } = this.props;
+      const { history, score, name, picture, dispatch } = this.props;
+      const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
+      const newRanking = [...ranking, { name, score, picture }];
+      newRanking.sort((a, b) => b.score - a.score);
+      localStorage.setItem('ranking', JSON.stringify(newRanking));
       history.push('/feedback');
+      dispatch(resetIndex(0));
     }
 
     return (
@@ -71,6 +77,9 @@ Game.propTypes = {
 
 const mapStateToProps = (state) => ({
   currentIndex: state.game.currentIndex,
+  score: state.player.score,
+  picture: state.player.picture,
+  name: state.player.name,
 });
 
 export default connect(mapStateToProps)(Game);

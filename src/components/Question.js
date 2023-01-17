@@ -8,7 +8,7 @@ class Question extends Component {
   state = {
     timePlayer: '',
     intervalID: undefined,
-    timeOver: false,
+    timeOver: true,
     showNextBtn: false,
     timerFunc: undefined,
   };
@@ -32,6 +32,12 @@ class Question extends Component {
         if (timePlayer === '00:00') {
           this.setState({
             timeOver: true,
+            showNextBtn: true,
+          });
+        }
+        if (timePlayer === '') {
+          this.setState({
+            timeOver: false,
           });
         }
       }, ONE_SECOND);
@@ -87,6 +93,7 @@ class Question extends Component {
     this.setState({
       showNextBtn: true,
       timePlayer: '',
+      timeOver: true,
     }, () => {
       const { intervalID } = this.state;
       clearInterval(intervalID);
@@ -100,6 +107,7 @@ class Question extends Component {
     dispatch(nextQuestion(1));
     this.setState({
       showNextBtn: false,
+      timeOver: true,
     }, () => {
       timerFunc(QUESTION_DURATION);
     });

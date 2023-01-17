@@ -1,4 +1,4 @@
-import { NEXT_QUESTION } from '../actions';
+import { NEXT_QUESTION, RESET_INDEX } from '../actions';
 
 const INITIAL_STATE = {
   questions: [],
@@ -11,6 +11,12 @@ const gameReducer = (state = INITIAL_STATE, action) => {
     return {
       ...state,
       currentIndex: state.currentIndex + action.payload,
+    };
+  }
+  case RESET_INDEX: {
+    return {
+      ...state,
+      currentIndex: action.payload,
     };
   }
   default: return state;
